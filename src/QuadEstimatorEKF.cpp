@@ -187,6 +187,34 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  // TODO: Figure out why the below commented out code doesn't work
+  //// Rotate a vecotr from body frame to inertial frame
+  //V3F body_rates_inertial = attitude.Rotate_BtoI(accel);
+
+  //// Initialize a derivative vector consist of current accelerations and body rates
+  //VectorXf curState_prime = curState; 
+  //curState_prime(0) = curState(3);                              // Position X
+  //curState_prime(1) = curState(4);                              // Position Y
+  //curState_prime(2) = curState(5);                              // Position Z
+  //curState_prime(3) = body_rates_inertial.x;                    // Acceleration X
+  //curState_prime(4) = body_rates_inertial.y;                    // Acceleration Y
+  //curState_prime(5) = body_rates_inertial.z - CONST_GRAVITY;    // Acceleration Z
+
+  //// Predict the state
+  //// Remember predictedState was initialized with curState above
+  //predictedState += dt * curState_prime;
+
+  // Rotate a vecotr from body frame to inertial frame
+  V3F body_rates_inertial = attitude.Rotate_BtoI(accel);
+  
+  // Predict the state
+  // Remember predictedState was initialized with curState above
+  predictedState(0) += dt * predictedState(3);                       // Position X
+  predictedState(1) += dt * predictedState(4);                       // Position Y
+  predictedState(2) += dt * predictedState(5);                       // Position Z
+  predictedState(3) += dt * body_rates_inertial.x;                   // Acceleration X
+  predictedState(4) += dt * body_rates_inertial.y;                   // Acceleration Y
+  predictedState(5) += dt * (body_rates_inertial.z - CONST_GRAVITY); // Acceleration Z
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
