@@ -93,9 +93,34 @@ void QuadEstimatorEKF::UpdateFromIMU(V3F accel, V3F gyro)
   // (replace the code below)
   // make sure you comment it out when you add your own code -- otherwise e.g. you might integrate yaw twice
 
-  float predictedPitch = pitchEst + dtIMU * gyro.y;
-  float predictedRoll = rollEst + dtIMU * gyro.x;
-  ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
+  //float predictedPitch = pitchEst + dtIMU * gyro.y;
+  //float predictedRoll = rollEst + dtIMU * gyro.x;
+  //ekfState(6) = ekfState(6) + dtIMU * gyro.z;	// yaw
+
+  // Initialize rotation matrix
+  Mat3x3F euler_rot_mat = Mat3x3F::Zeros();
+  
+  float phi   = rollEst;  // Current roll
+  float theta = pitchEst; // Current pitch
+  
+  // First row
+  euler_rot_mat(0, 0) = 1;
+  euler_rot_mat(0, 1) = sin(phi) * tan(theta);
+  euler_rot_mat(0, 2) = cos(phi) * tan(theta);
+  // Second row
+  euler_rot_mat(1, 1) = cos(phi);
+  euler_rot_mat(1, 2) = -sin(phi);
+  // Third row
+  euler_rot_mat(2, 1) = sin(phi) / cos(theta);
+  euler_rot_mat(2, 2) = cos(phi) / cos(theta);
+
+  // Going from rotation rates in the body frame to turn rates in the world frame
+  V3F euler_dot = euler_rot_mat * gyro;
+
+  // Advance the state of the drone
+  float predictedRoll   = phi   + dtIMU * euler_dot.x; // New roll
+  float predictedPitch  = theta + dtIMU * euler_dot.y; // New pitch
+        ekfState(6)    +=         dtIMU * euler_dot.z; // New yaw
 
   // normalize yaw to -pi .. pi
   if (ekfState(6) > F_PI) ekfState(6) -= 2.f*F_PI;
