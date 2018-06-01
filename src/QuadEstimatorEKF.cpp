@@ -336,6 +336,18 @@ void QuadEstimatorEKF::UpdateFromGPS(V3F pos, V3F vel)
   //  - this is a very simple update
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  // Initialize zFromX with ekfState
+  for (int i = 0; i < 6; i++) {
+	  zFromX(i) = ekfState(i);
+  }
+  
+
+  // Initialize hPrime
+  // The partial derivative is the identity matrix
+  for (int i = 0; i < 6; i++) {
+	  hPrime(i, i) = 1;
+  }
+
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   Update(z, hPrime, R_GPS, zFromX);
