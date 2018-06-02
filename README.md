@@ -198,7 +198,7 @@ There are two ways to view the output of the evaluation:
  
  ## Project Description  
 - [QuadEstimatorEKF.cpp](./src/QuadEstimatorEKF.cpp): This file contains all of the code for the estimator that you will be developing.
-- [config/QuadEstimatorEKF.txt](./config/QuadEstimatorEKF.txt): This file contains all your estimator gains and other desired tuning.
+- [QuadEstimatorEKF.txt](./config/QuadEstimatorEKF.txt): This file contains all your estimator gains and other desired tuning.
 - [QuadControl.cpp](./src/QuadControl.cpp): This file contains all of the code for the controller that you will be developing.  
 - [QuadControlParams.txt](./config/QuadControlParams.txt): This file contains all your control gains and other desired tuning parameters.  
 - [README.md](./README.md): Writeup for this project, including setup, running instructions and project rubric addressing.  
@@ -280,6 +280,6 @@ Video after `UpdateFromGPS()` completed.
 
 #### 3.2 De-tune your controller to successfully fly the final desired box trajectory with your estimator and realistic sensors.  
 - Step 6: Adding Your Controller  
-Video after using my previous controller and tuned control parameters.  
+Video after using my previous controller and getting the control parameters tuned.  
 11_GPSUpdate_After_Using_Previous_Controller_and_Parameters  
 ![11_GPSUpdate_After_Using_Previous_Controller_and_Parameters](./videos/11_GPSUpdate_After_Using_Previous_Controller_and_Parameters.gif)  
