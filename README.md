@@ -6,8 +6,8 @@ This is the project 4 of term 1 in [Flying Car Nanodegree](https://www.udacity.c
 For easy navigation throughout this document, here is an outline:  
 
  - [Prerequisites](#prerequisites)
- - [Setup Instructions](#setup-instructions) - the environment and code setup required to get started and a brief overview of the project structure
- - [The tasks](#the-tasks) - the tasks you will need to complete for the project
+ - [Setup Instructions](#setup-instructions)
+ - [The tasks](#the-tasks)
  - [Evaluation](#evaluation)
  - [Project Description](#project-description)
  - [Run the project](#run-the-project)
@@ -197,39 +197,89 @@ There are two ways to view the output of the evaluation:
  - on the plots, once your quad meets the metrics, you will see a green box appear on the plot notifying you of a **PASS**
  
  ## Project Description  
+- [QuadEstimatorEKF.cpp](./src/QuadEstimatorEKF.cpp): This file contains all of the code for the estimator that you will be developing.
+- [config/QuadEstimatorEKF.txt](./config/QuadEstimatorEKF.txt): This file contains all your estimator gains and other desired tuning.
 - [QuadControl.cpp](./src/QuadControl.cpp): This file contains all of the code for the controller that you will be developing.  
 - [QuadControlParams.txt](./config/QuadControlParams.txt): This file contains all your control gains and other desired tuning parameters.  
 - [README.md](./README.md): Writeup for this project, including setup, running instructions and project rubric addressing.  
 
 ## Run the project  
-To compile and run the project / simulator, simply click on the green play button at the top of the screen.  When you run the simulator, you should see a single quadcopter, falling down.  
+To compile and run the project / simulator, simply click on the green play button at the top of the screen.  When you run the simulator, you should see a single quadcopter, falling down in senario `1_Intro`.  
 
 ## Project Rubric  
 ### 1. Writeup  
 #### 1.1 Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf.  
 You are reading it!  
-### 2. Implemented Controller  
-#### 2.1 Implemented body rate control in C++.  
-Body rate control was implemented at [`/src/QuadControl.cpp` Line114-127](./src/QuadControl.cpp#L114-L127)  
-#### 2.2 Implement roll pitch control in C++.  
-Roll pitch control was implemented at [`/src/QuadControl.cpp` Line154-184](./src/QuadControl.cpp#L154-L184)  
-#### 2.3 Implement altitude controller in C++.  
-Altitude control was implemented at [`/src/QuadControl.cpp` Line212-236](./src/QuadControl.cpp#L212-L236)  
-#### 2.4 Implement lateral position control in C++.  
-Lateral position control was implemented at [`/src/QuadControl.cpp` Line270-300](./src/QuadControl.cpp#L270-L300)  
-#### 2.5 Implement yaw control in C++.  
-Yaw control was implemented at [`/src/QuadControl.cpp` Line319-343](./src/QuadControl.cpp#L319-L343)  
-#### 2.6 Implement calculating the motor commands given commanded thrust and moments in C++.  
-Generate motor commands was implemented at [`/src/QuadControl.cpp` Line71-93](./src/QuadControl.cpp#L71-L93)  
-### 3. Flight Evaluation
-#### 3.1 Your C++ controller is successfully able to fly the provided test trajectory and visually passes inspection of the scenarios leading up to the test trajectory.  
-1_Intro  
-![1_Intro](./videos/1_Intro.gif)  
-2_AttitudeControl  
-![2_AttitudeControl](./videos/2_AttitudeControl.gif)  
-3_PositionControl  
-![3_PositionControl](./videos/3_PositionControl.gif)  
-4_Nonidealities  
-![4_Nonidealities](./videos/4_Nonidealities.gif)  
-5_TrajectoryFollow  
-![5_TrajectoryFollow](./videos/5_TrajectoryFollow.gif)  
+### 2. Implemented Estimator
+#### 2.1 Determine the standard deviation of the measurement noise of both GPS X data and Accelerometer X data.  
+Standard deviation of the measurement noise of both GPS X data and Accelerometer X data were calculated in the [CalculateMeanStdDev.sln](https://github.com/ikcGitHub/FCND-Term1-P4-Building-an-Estimator/tree/ikc-solution/MyAwesomeTool/CalculateMeanStdDev).
+Results were stored in [06_SensorNoise.txt](https://github.com/ikcGitHub/FCND-Term1-P4-Building-an-Estimator/blob/ikc-solution/config/06_SensorNoise.txt)  
+Here is a quick look.  
+- MeasuredStdDev_GPSPosXY = 2  
+- MeasuredStdDev_AccelXY = .1  
+#### 2.2 Implement a better rate gyro attitude integration scheme in the `UpdateFromIMU()` function.  
+Better rate gyro attitude integration was implemented in `UpdateFromIMU()` at [`QuadEstimatorEKF.cpp` Line91-129](./src/QuadEstimatorEKF.cpp#L91-L129)  
+#### 2.3 Implement all of the elements of the prediction step for the estimator.  
+State prediction step was implemented in `PredictState()` at [`QuadEstimatorEKF.cpp` Line188-219](./src/QuadEstimatorEKF.cpp#L188-L219)  
+Calculation on the partial derivative of the body-to-global rotation matrix was implemented in `GetRbgPrime()` at [`QuadEstimatorEKF.cpp` Line243-259](./src/QuadEstimatorEKF.cpp#L243-L259)  
+The rest of the prediction step (predict the state covariance forward) was implemented in `Predict()` at [`QuadEstimatorEKF.cpp` Line302-315](./src/QuadEstimatorEKF.cpp#L302-L315)  
+#### 2.4 Implement the magnetometer update.  
+Magnetometer update was implemented in `UpdateFromMag()` at [`QuadEstimatorEKF.cpp` Line370-388](./src/QuadEstimatorEKF.cpp#L370-L388)  
+#### 2.5 Implement the GPS update.  
+The EKF GPS Update was implemented in `UpdateFromGPS()` at [`QuadEstimatorEKF.cpp` Line337-351](./src/QuadEstimatorEKF.cpp#L337-L351)  
+### 3. Flight Evaluation  
+#### 3.1 Meet the performance criteria of each step.  
+- Step 1: Sensor Noise  
+Video after pluged in the calculated result into the 6_Sensoroise.txt.  
+06_SensorNoise  
+![06_SensorNoise](./videos/06_SensorNoise.gif)  
+
+- Step 2: Attitude Estimation  
+Video after better attitude integration implemented.  
+07_AttitudeEstimation  
+![07_AttitudeEstimation](./videos/07_AttitudeEstimation.gif)  
+
+- Step 3: Prediction Step  
+Video with nothing changed.  
+08_PredictState  
+![08_PredictState](./videos/08_PredictState.gif)  
+
+Video after `PredictState()` completed.  
+09_PredictCovariance_Before_change_GetRbgPrime  
+![09_PredictCovariance_Before_change_GetRbgPrime](./videos/09_PredictCovariance_Before_change_GetRbgPrime.gif)  
+
+Video after `GetRbgPrime()` completed.  
+09_PredictCovariance_After_change_GetRbgPrime_and_Predict  
+![09_PredictCovariance_After_change_GetRbgPrime_and_Predict](./videos/09_PredictCovariance_After_change_GetRbgPrime_and_Predict.gif)  
+
+Video after tuning get done.  
+09_PredictCovariance_After_tuning  
+![09_PredictCovariance_After_tuning](./videos/09_PredictCovariance_After_tuning.gif)  
+
+- Step 4: Magnetometer Update  
+Video after `UpdateFromMag` completed and tuning.
+10_MagUpdate  
+![10_MagUpdate](./videos/10_MagUpdate.gif)  
+
+- Step 5: Closed Loop + GPS Update  
+Video with nothing changed.  
+11_GPSUpdate_Before_Changes_Made  
+![11_GPSUpdate_Before_Changes_Made](./videos/11_GPSUpdate_Before_Changes_Made.gif)  
+
+Video after using my estimator.  
+11_GPSUpdate_After_Using_My_Estimator  
+![11_GPSUpdate_After_Using_My_Estimator](./videos/11_GPSUpdate_After_Using_My_Estimator.gif)  
+
+Video after using realistic IMU.  
+11_GPSUpdate_After_Using_Realistic_IMU  
+![11_GPSUpdate_After_Using_Realistic_IMU](./videos/11_GPSUpdate_After_Using_Realistic_IMU.gif)  
+
+Video after `UpdateFromGPS()` completed.  
+11_GPSUpdate_After_Completing_UpdateFromGPS_and_Tuning  
+![11_GPSUpdate_After_Completing_UpdateFromGPS_and_Tuning](./videos/11_GPSUpdate_After_Completing_UpdateFromGPS_and_Tuning.gif)  
+
+#### 3.2 De-tune your controller to successfully fly the final desired box trajectory with your estimator and realistic sensors.  
+- Step 6: Adding Your Controller  
+Video after using my previous controller and tuned control parameters.  
+11_GPSUpdate_After_Using_Previous_Controller_and_Parameters  
+![11_GPSUpdate_After_Using_Previous_Controller_and_Parameters](./videos/11_GPSUpdate_After_Using_Previous_Controller_and_Parameters.gif)  
