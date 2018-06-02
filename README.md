@@ -1,16 +1,23 @@
-# Estimation Project #
+# FCND-Term1-P4-Building-an-Estimator  
 
-Welcome to the estimation project.  In this project, you will be developing the estimation portion of the controller used in the CPP simulator.  By the end of the project, your simulated quad will be flying with your estimator and your custom controller (from the previous project)!
+## Overview  
+This is the project 4 of term 1 in [Flying Car Nanodegree](https://www.udacity.com/course/flying-car-nanodegree--nd787) on Udacity. In this project, you will be developing the estimation portion of the controller used in the CPP simulator.  By the end of the project, your simulated quad will be flying with your estimator and your custom controller (from the previous project [FCND-Term1-P3-Control-of-a-3D-Quadrotor-CPP](https://github.com/ikcGitHub/FCND-Term1-P3-Control-of-a-3D-Quadrotor-CPP))!  
 
-This README is broken down into the following sections:
+For easy navigation throughout this document, here is an outline:  
 
- - [Setup](#setup) - the environment and code setup required to get started and a brief overview of the project structure
- - [The Tasks](#the-tasks) - the tasks you will need to complete for the project
- - [Tips and Tricks](#tips-and-tricks) - some additional tips and tricks you may find useful along the way
- - [Submission](#submission) - overview of the requirements for your project submission
+ - [Prerequisites](#prerequisites)
+ - [Setup Instructions](#setup-instructions) - the environment and code setup required to get started and a brief overview of the project structure
+ - [The tasks](#the-tasks) - the tasks you will need to complete for the project
+ - [Evaluation](#evaluation)
+ - [Project Description](#project-description)
+ - [Run the project](#run-the-project)
+ - [Project Rubric](#project-rubric)
 
+## Prerequisites
+To run this project, you need to have the following software installed:  
+- [Visual Studio](https://www.visualstudio.com/vs/community/)  
 
-## Setup ##
+## Setup Instructions
 
 This project will continue to use the C++ development environment you set up in the Controls C++ project.
 
@@ -22,43 +29,6 @@ This project will continue to use the C++ development environment you set up in 
  2. Import the code into your IDE like done in the [Controls C++ project](https://github.com/udacity/FCND-Controls-CPP#development-environment-setup)
  
  3. You should now be able to compile and run the estimation simulator just as you did in the controls project
-
-
-### Project Structure ###
-
-For this project, you will be interacting with a few more files than before.
-
- - The EKF is already partially implemented for you in `QuadEstimatorEKF.cpp`
-
- - Parameters for tuning the EKF are in the parameter file `QuadEstimatorEKF.txt`
-
- - When you turn on various sensors (the scenarios configure them, e.g. `Quad.Sensors += SimIMU, SimMag, SimGPS`), additional sensor plots will become available to see what the simulated sensors measure.
-
- - The EKF implementation exposes both the estimated state and a number of additional variables. In particular:
-
-   - `Quad.Est.E.X` is the error in estimated X position from true value.  More generally, the variables in `<vehicle>.Est.E.*` are relative errors, though some are combined errors (e.g. MaxEuler).
-
-   - `Quad.Est.S.X` is the estimated standard deviation of the X state (that is, the square root of the appropriate diagonal variable in the covariance matrix). More generally, the variables in `<vehicle>.Est.S.*` are standard deviations calculated from the estimator state covariance matrix.
-
-   - `Quad.Est.D` contains miscellaneous additional debug variables useful in diagnosing the filter. You may or might not find these useful but they were helpful to us in verifying the filter and may give you some ideas if you hit a block.
-
-
-#### `config` Directory ####
-
-In the `config` directory, in addition to finding the configuration files for your controller and your estimator, you will also see configuration files for each of the simulations.  For this project, you will be working with simulations 06 through 11 and you may find it insightful to take a look at the configuration for the simulation.
-
-As an example, if we look through the configuration file for scenario 07, we see the following parameters controlling the sensor:
-
-```
-# Sensors
-Quad.Sensors = SimIMU
-# use a perfect IMU
-SimIMU.AccelStd = 0,0,0
-SimIMU.GyroStd = 0,0,0
-```
-
-This configuration tells us that the simulator is only using an IMU and the sensor data will have no noise.  You will notice that for each simulator these parameters will change slightly as additional sensors are being used and the noise behavior of the sensors change.
-
 
 ## The Tasks ##
 
@@ -217,26 +187,49 @@ Up to this point, we have been working with a controller that has been relaxed t
 ***Success criteria:*** *Your objective is to complete the entire simulation cycle with estimated position error of < 1m.*
 
 
-## Tips and Tricks ##
+## Evaluation ##
 
- - When it comes to transposing matrices, `.transposeInPlace()` is the function you want to use to transpose a matrix
+To assist with tuning of your controller, the simulator contains real time performance evaluation.  We have defined a set of performance metrics for each of the scenarios that your controllers must meet for a successful submission.
 
- - The [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) document contains a helpful mathematical breakdown of the core elements on your estimator
+There are two ways to view the output of the evaluation:
 
-## Submission ##
+ - in the command line, at the end of each simulation loop, a **PASS** or a **FAIL** for each metric being evaluated in that simulation
+ - on the plots, once your quad meets the metrics, you will see a green box appear on the plot notifying you of a **PASS**
+ 
+ ## Project Description  
+- [QuadControl.cpp](./src/QuadControl.cpp): This file contains all of the code for the controller that you will be developing.  
+- [QuadControlParams.txt](./config/QuadControlParams.txt): This file contains all your control gains and other desired tuning parameters.  
+- [README.md](./README.md): Writeup for this project, including setup, running instructions and project rubric addressing.  
 
-For this project, you will need to submit:
+## Run the project  
+To compile and run the project / simulator, simply click on the green play button at the top of the screen.  When you run the simulator, you should see a single quadcopter, falling down.  
 
- - a completed estimator that meets the performance criteria for each of the steps by submitting:
-   - `QuadEstimatorEKF.cpp`
-   - `config/QuadEstimatorEKF.txt`
-
- - a re-tuned controller that, in conjunction with your tuned estimator, is capable of meeting the criteria laid out in Step 6 by submitting:
-   - `QuadController.cpp`
-   - `config/QuadControlParams.txt`
-
- - a write up addressing all the points of the rubric
-
-## Authors ##
-
-Thanks to Fotokite for the initial development of the project code and simulator.
+## Project Rubric  
+### 1. Writeup  
+#### 1.1 Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf.  
+You are reading it!  
+### 2. Implemented Controller  
+#### 2.1 Implemented body rate control in C++.  
+Body rate control was implemented at [`/src/QuadControl.cpp` Line114-127](./src/QuadControl.cpp#L114-L127)  
+#### 2.2 Implement roll pitch control in C++.  
+Roll pitch control was implemented at [`/src/QuadControl.cpp` Line154-184](./src/QuadControl.cpp#L154-L184)  
+#### 2.3 Implement altitude controller in C++.  
+Altitude control was implemented at [`/src/QuadControl.cpp` Line212-236](./src/QuadControl.cpp#L212-L236)  
+#### 2.4 Implement lateral position control in C++.  
+Lateral position control was implemented at [`/src/QuadControl.cpp` Line270-300](./src/QuadControl.cpp#L270-L300)  
+#### 2.5 Implement yaw control in C++.  
+Yaw control was implemented at [`/src/QuadControl.cpp` Line319-343](./src/QuadControl.cpp#L319-L343)  
+#### 2.6 Implement calculating the motor commands given commanded thrust and moments in C++.  
+Generate motor commands was implemented at [`/src/QuadControl.cpp` Line71-93](./src/QuadControl.cpp#L71-L93)  
+### 3. Flight Evaluation
+#### 3.1 Your C++ controller is successfully able to fly the provided test trajectory and visually passes inspection of the scenarios leading up to the test trajectory.  
+1_Intro  
+![1_Intro](./videos/1_Intro.gif)  
+2_AttitudeControl  
+![2_AttitudeControl](./videos/2_AttitudeControl.gif)  
+3_PositionControl  
+![3_PositionControl](./videos/3_PositionControl.gif)  
+4_Nonidealities  
+![4_Nonidealities](./videos/4_Nonidealities.gif)  
+5_TrajectoryFollow  
+![5_TrajectoryFollow](./videos/5_TrajectoryFollow.gif)  
